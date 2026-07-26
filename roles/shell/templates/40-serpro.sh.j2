@@ -1,0 +1,127 @@
+###############################################################################
+# AWS / EKS - SERPRO
+###############################################################################
+
+# Configuração
+export AWS_PROFILE=""
+export SERPRO_ENV="LOCAL"
+
+KUBE_CONTEXT_PROD="prod"
+KUBE_CONTEXT_HMLG="hmlg"
+
+###############################################################################
+# Aviso para produção
+###############################################################################
+
+__serpro_warning() {
+
+    echo
+    echo -e "\e[1;31m######################################################################"
+    echo "#                                                                    #"
+    echo "#                 !!!   ATENÇÃO   !!!                                #"
+    echo "#                                                                    #"
+    echo "#  Você está conectado a um ambiente de PRODUÇÃO.                    #"
+    echo "#                                                                    #"
+    echo "#  Qualquer comando executado poderá afetar serviços reais.          #"
+    echo "#                                                                    #"
+    echo "######################################################################"
+    echo -e "\e[0m"
+}
+
+###############################################################################
+# Login AWS
+###############################################################################
+
+serprologin() {
+
+    local perfil="${1:-hmlg}"
+    local ambiente
+    local kube_context
+
+    case "$perfil" in
+        prod)
+            ambiente="PROD"
+            kube_context="$KUBE_CONTEXT_PROD"
+            ;;
+        hmlg)
+            ambiente="HMLG"
+            kube_context="$KUBE_CONTEXT_HMLG"
+            ;;
+        dev)
+            ambiente="DEV"
+            kube_context="$KUBE_CONTEXT_HMLG"
+            ;;
+        gaia)
+            ambiente="GAIA"
+            kube_context="$KUBE_CONTEXT_HMLG"
+            ;;
+        *)
+            echo "Uso: serprologin [prod|hmlg|dev|gaia]"
+            return 1
+            ;;
+    esac
+
+    export AWS_PROFILE="$perfil"
+    export SERPRO_ENV="$ambiente"
+
+    if AWS_PROFILE="$perfil" aws sts get-caller-identity >/dev/null 2>&1; then
+        echo "Sessão SSO já está ativa para '$perfil'."
+    else
+        echo "Efetuando login no perfil '$perfil'..."
+
+        aws sso login --profile "$perfil" || {
+            echo "Falha ao efetuar login."
+
+            unset AWS_PROFILE
+            export SERPRO_ENV="LOCAL"
+            return 1
+        }
+
+        if ! AWS_PROFILE="$perfil" aws sts get-caller-identity >/dev/null 2>&1; then
+            echo "Não foi possível validar a sessão."
+
+            unset AWS_PROFILE
+            export SERPRO_ENV="LOCAL"
+            return 1
+        fi
+    fi
+
+    if [[ -f ~/.kube/config ]]; then
+        kubectl config use-context "$kube_context" >/dev/null 2>&1
+    fi
+
+    if [[ "$perfil" == "prod" || "$perfil" == "gaia" ]]; then
+        __serpro_warning
+    fi
+
+    echo
+    echo "Ambiente.......: $SERPRO_ENV"
+    echo "AWS Profile....: $AWS_PROFILE"
+
+    if [[ -f ~/.kube/config ]]; then
+        echo "Kubectl........: $(kubectl config current-context)"
+    fi
+
+    echo
+}
+
+###############################################################################
+# Logout
+###############################################################################
+
+serprologout() {
+
+    aws sso logout >/dev/null 2>&1
+
+    unset AWS_PROFILE
+    export SERPRO_ENV="LOCAL"
+
+    if [[ -f ~/.kube/config ]]; then
+        kubectl config use-context "$KUBE_CONTEXT_HMLG" >/dev/null 2>&1
+    fi
+
+    echo
+    echo "Logout realizado."
+    echo "Sessão local."
+    echo
+}

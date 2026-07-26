@@ -1,0 +1,8 @@
+#------------------------------------------------------------------------------
+# Arquivo gerado automaticamente pelo Ansible
+# NÃO EDITE
+#------------------------------------------------------------------------------
+
+{% for alias, command in shell_aliases.items() %}
+alias {{ alias }}='{{ command }}'
+{% endfor %}

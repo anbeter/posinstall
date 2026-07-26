@@ -1,0 +1,32 @@
+###############################################################################
+# Prompt
+###############################################################################
+
+__serpro_prompt() {
+
+    local env="${SERPRO_ENV:-LOCAL}"
+    local color
+
+    case "$env" in
+        PROD)
+            color="\[\e[1;31m\]"
+            ;;
+        HMLG)
+            color="\[\e[1;32m\]"
+            ;;
+        DEV)
+            color="\[\e[1;33m\]"
+            ;;
+        GAIA)
+            color="\[\e[1;34m\]"
+            ;;
+        *)
+            env="LOCAL"
+            color="\[\e[90m\]"
+            ;;
+    esac
+
+    PS1="${color}[${env}]\[\e[0m\] \u@\h:\w\\$ "
+}
+
+PROMPT_COMMAND="__serpro_prompt"

@@ -1,40 +1,97 @@
 ---
 - name: Detectar usuário real
   ansible.builtin.set_fact:
-    shell_user: "{{ ansible_facts.env.SUDO_USER | default(ansible_facts.user_id, true) }}"
+    shell_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id, true) }}"
 
+- name: Obter informações do usuário
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ shell_user }}"
 
-- name: Detectar home do usuário
+- name: Detectar HOME do usuário
   ansible.builtin.set_fact:
-    shell_home: "/home/{{ shell_user }}"
+    shell_home: "{{ getent_passwd[shell_user][4] }}"
 
+###############################################################################
+# bashrc.d
+###############################################################################
 
-- name: Configurar aliases do Bash
+- name: Criar diretório ~/.bashrc.d
+  ansible.builtin.file:
+    path: "{{ shell_home }}/.bashrc.d"
+    state: directory
+    owner: "{{ shell_user }}"
+    group: "{{ shell_user }}"
+    mode: "0755"
+
+###############################################################################
+# Arquivos
+###############################################################################
+
+- name: Criar aliases
   ansible.builtin.template:
-    src: bash_aliases.j2
-    dest: "{{ shell_home }}/.bash_aliases"
+    src: 10-aliases.sh.j2
+    dest: "{{ shell_home }}/.bashrc.d/10-aliases.sh"
     owner: "{{ shell_user }}"
     group: "{{ shell_user }}"
     mode: "0644"
-  become: false
 
+- name: Criar aliases kubectl
+  ansible.builtin.template:
+    src: 20-kubectl.sh.j2
+    dest: "{{ shell_home }}/.bashrc.d/20-kubectl.sh"
+    owner: "{{ shell_user }}"
+    group: "{{ shell_user }}"
+    mode: "0644"
 
-- name: Garantir carregamento dos aliases no Bash
-  ansible.builtin.lineinfile:
+- name: Criar aliases AWS
+  ansible.builtin.template:
+    src: 30-aws.sh.j2
+    dest: "{{ shell_home }}/.bashrc.d/30-aws.sh"
+    owner: "{{ shell_user }}"
+    group: "{{ shell_user }}"
+    mode: "0644"
+
+- name: Criar configurações Serpro
+  ansible.builtin.template:
+    src: 40-serpro.sh.j2
+    dest: "{{ shell_home }}/.bashrc.d/40-serpro.sh"
+    owner: "{{ shell_user }}"
+    group: "{{ shell_user }}"
+    mode: "0644"
+
+- name: Criar prompt
+  ansible.builtin.template:
+    src: 50-prompt.sh.j2
+    dest: "{{ shell_home }}/.bashrc.d/50-prompt.sh"
+    owner: "{{ shell_user }}"
+    group: "{{ shell_user }}"
+    mode: "0644"
+
+###############################################################################
+# bashrc
+###############################################################################
+
+- name: Garantir carregamento do bashrc.d
+  ansible.builtin.blockinfile:
     path: "{{ shell_home }}/.bashrc"
-    line: "[ -f ~/.bash_aliases ] && source ~/.bash_aliases"
+    marker: "# {mark} ANSIBLE BASHRC.D"
+    block: |
+      if [ -d ~/.bashrc.d ]; then
+          for file in ~/.bashrc.d/*.sh; do
+              [ -r "$file" ] && source "$file"
+          done
+      done
     create: true
     owner: "{{ shell_user }}"
     group: "{{ shell_user }}"
     mode: "0644"
-  become: false
 
+###############################################################################
+# Compatibilidade (opcional)
+###############################################################################
 
-- name: Configurar aliases do ZSH
-  ansible.builtin.template:
-    src: zsh_aliases.j2
-    dest: "{{ shell_home }}/.zsh_aliases"
-    owner: "{{ shell_user }}"
-    group: "{{ shell_user }}"
-    mode: "0644"
-  become: false
+# - name: Remover antigo .bash_aliases
+#   ansible.builtin.file:
+#     path: "{{ shell_home }}/.bash_aliases"
+#     state: absent
