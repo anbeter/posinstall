@@ -1,0 +1,7 @@
+---
+- name: Atualizar cache do apt
+  ansible.builtin.apt:
+    update_cache: true
+
+
+

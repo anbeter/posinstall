@@ -1,0 +1,11 @@
+---
+- name: Definir arquitetura minikube
+  ansible.builtin.set_fact:
+    minikube_arch: "{{ minikube_arch_map[ansible_facts['architecture']] }}"
+
+
+- name: Baixar minikube
+  ansible.builtin.get_url:
+    url: "https://storage.googleapis.com/minikube/releases/{{ minikube_version }}/minikube-linux-{{ minikube_arch }}"
+    dest: "{{ minikube_install_path }}"
+    mode: "0755"

@@ -1,0 +1,5 @@
+---
+common_upgrade_system: true
+common_install_packages: true
+common_set_timezone: true
+common_set_locale: true

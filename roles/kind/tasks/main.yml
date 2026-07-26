@@ -1,0 +1,11 @@
+---
+- name: Definir arquitetura kind
+  ansible.builtin.set_fact:
+    kind_arch: "{{ kind_arch_map[ansible_facts['architecture']] }}"
+
+
+- name: Baixar kind
+  ansible.builtin.get_url:
+    url: "https://kind.sigs.k8s.io/dl/{{ kind_version }}/kind-linux-{{ kind_arch }}"
+    dest: "{{ kind_install_path }}"
+    mode: "0755"

@@ -1,0 +1,6 @@
+---
+- import_playbook: workstation.yml
+- import_playbook: devops.yml
+- import_playbook: kubernetes.yml
+- import_playbook: desktop.yml
+- import_playbook: minimal.yml

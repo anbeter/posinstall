@@ -1,0 +1,32 @@
+---
+shell_aliases:
+  l: "ls"
+  ll: "ls -lsah"
+  la: "ls -la"
+
+  ..: "cd .."
+  ...: "cd ../.."
+
+  c: "clear"
+
+  grep: "grep --color=auto"
+
+  # Docker
+  dps: "docker ps"
+  dpa: "docker ps -a"
+  dc: "docker compose"
+
+  # Git
+  gs: "git status"
+  gp: "git pull"
+  gps: "git push"
+  gl: "git log --oneline --graph --decorate --all"
+
+
+  aws:
+    awswho: "aws sts get-caller-identity"
+    awsacc: "aws sts get-caller-identity --query Account --output text"
+    awsarn: "aws sts get-caller-identity --query Arn --output text"
+    awsprofiles: "aws configure list-profiles"
+    awsreg: "aws configure get region"
+    awslogout: "rm -rf ~/.aws/sso/cache/*"

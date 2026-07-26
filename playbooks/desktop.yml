@@ -1,0 +1,21 @@
+---
+- name: Desktop Applications
+  hosts: localhost
+  become: true
+
+  pre_tasks:
+
+    - name: Carregar variáveis da distribuição
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/vars/{{ ansible_facts['distribution'] }}.yml"
+
+  roles:
+    - repositories
+    - common
+    - google_chrome
+    - vscode
+    - fonts
+    - obs_studio
+    - pdf_tools
+    - zsh
+    - spotify

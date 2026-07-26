@@ -1,0 +1,40 @@
+---
+- name: Detectar usuário real
+  ansible.builtin.set_fact:
+    shell_user: "{{ ansible_facts.env.SUDO_USER | default(ansible_facts.user_id, true) }}"
+
+
+- name: Detectar home do usuário
+  ansible.builtin.set_fact:
+    shell_home: "/home/{{ shell_user }}"
+
+
+- name: Configurar aliases do Bash
+  ansible.builtin.template:
+    src: bash_aliases.j2
+    dest: "{{ shell_home }}/.bash_aliases"
+    owner: "{{ shell_user }}"
+    group: "{{ shell_user }}"
+    mode: "0644"
+  become: false
+
+
+- name: Garantir carregamento dos aliases no Bash
+  ansible.builtin.lineinfile:
+    path: "{{ shell_home }}/.bashrc"
+    line: "[ -f ~/.bash_aliases ] && source ~/.bash_aliases"
+    create: true
+    owner: "{{ shell_user }}"
+    group: "{{ shell_user }}"
+    mode: "0644"
+  become: false
+
+
+- name: Configurar aliases do ZSH
+  ansible.builtin.template:
+    src: zsh_aliases.j2
+    dest: "{{ shell_home }}/.zsh_aliases"
+    owner: "{{ shell_user }}"
+    group: "{{ shell_user }}"
+    mode: "0644"
+  become: false

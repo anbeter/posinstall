@@ -1,0 +1,66 @@
+---
+- name: Garantir que Git está instalado no RedHat
+  ansible.builtin.dnf:
+    name: git
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+
+- name: Garantir que Git está instalado no Debian
+  ansible.builtin.apt:
+    name: git
+    state: present
+    update_cache: true
+  when: ansible_facts['os_family'] == "Debian"
+
+
+- name: Configurar nome do usuário Git
+  community.general.git_config:
+    name: user.name
+    value: "{{ git_user_name }}"
+    scope: global
+  become: false
+
+
+- name: Configurar email do usuário Git
+  community.general.git_config:
+    name: user.email
+    value: "{{ git_user_email }}"
+    scope: global
+  become: false
+
+
+- name: Configurar editor padrão Git
+  community.general.git_config:
+    name: core.editor
+    value: "{{ git_editor }}"
+    scope: global
+  become: false
+
+
+- name: Configurar branch padrão
+  community.general.git_config:
+    name: init.defaultBranch
+    value: "{{ git_default_branch }}"
+    scope: global
+  become: false
+
+
+- name: Configurar aliases Git
+  community.general.git_config:
+    name: "alias.{{ item.key }}"
+    value: "{{ item.value }}"
+    scope: global
+  become: false
+  loop: "{{ git_aliases | dict2items }}"
+
+
+- name: Configurar opções extras do Git
+  community.general.git_config:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    scope: global
+  loop: "{{ git_extra_config | dict2items }}"
+  become: false
+  environment:
+    HOME: "{{ git_config_home }}"

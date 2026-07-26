@@ -1,0 +1,8 @@
+---
+- name: Configurar repositórios para RedHat
+  ansible.builtin.include_tasks: RedHat.yml
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Configurar repositórios para Debian
+  ansible.builtin.include_tasks: Debian.yml
+  when: ansible_facts['os_family'] == "Debian"

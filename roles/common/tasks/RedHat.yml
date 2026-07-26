@@ -1,0 +1,13 @@
+---
+- name: Atualizar sistema
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_cache: true
+  when: common_upgrade_system
+
+- name: Instalar pacotes básicos
+  ansible.builtin.dnf:
+    name: "{{ common_packages }}"
+    state: present
+  when: common_install_packages

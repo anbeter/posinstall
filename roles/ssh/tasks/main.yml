@@ -1,0 +1,42 @@
+---
+- name: Instalar cliente SSH no RedHat
+  ansible.builtin.dnf:
+    name: openssh-clients
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+
+- name: Instalar cliente SSH no Debian
+  ansible.builtin.apt:
+    name: openssh-client
+    state: present
+    update_cache: true
+  when: ansible_facts['os_family'] == "Debian"
+
+
+- name: Criar diretório .ssh
+  ansible.builtin.file:
+    path: "{{ ssh_directory }}"
+    state: directory
+    owner: "{{ ssh_user }}"
+    group: "{{ ssh_user }}"
+    mode: "0700"
+
+
+- name: Criar arquivo de configuração SSH
+  ansible.builtin.file:
+    path: "{{ ssh_config_file }}"
+    state: touch
+    owner: "{{ ssh_user }}"
+    group: "{{ ssh_user }}"
+    mode: "0600"
+
+
+- name: Criar chave SSH ED25519
+  community.crypto.openssh_keypair:
+    path: "{{ ssh_key_file }}"
+    type: "{{ ssh_key_type }}"
+    owner: "{{ ssh_user }}"
+    group: "{{ ssh_user }}"
+    mode: "0600"
+  become: true

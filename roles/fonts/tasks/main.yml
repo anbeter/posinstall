@@ -1,0 +1,20 @@
+---
+- name: Instalar fontes no RedHat
+  ansible.builtin.dnf:
+    name: "{{ fonts_redhat }}"
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+
+- name: Instalar fontes no Debian
+  ansible.builtin.apt:
+    name: "{{ fonts_debian }}"
+    state: present
+    update_cache: true
+  when: ansible_facts['os_family'] == "Debian"
+
+
+- name: Atualizar cache de fontes
+  ansible.builtin.command:
+    cmd: fc-cache -fv
+  changed_when: false

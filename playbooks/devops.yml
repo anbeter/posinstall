@@ -1,0 +1,23 @@
+---
+- name: DevOps Workstation
+  hosts: localhost
+  become: true
+
+  pre_tasks:
+
+    - name: Carregar variáveis da distribuição
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/vars/{{ ansible_facts['distribution'] }}.yml"
+
+  roles:
+    - repositories
+    - common
+    - terraform
+    - awscli
+    - kubectl
+    - helm
+    - k9s
+    - postgres
+    - shell
+
+

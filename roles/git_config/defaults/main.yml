@@ -1,0 +1,24 @@
+---
+git_config_user: "{{ ansible_facts.env.SUDO_USER | default(ansible_facts.user_id) }}"
+git_config_home: "/home/{{ git_config_user }}"
+
+git_user_name: "Edivano Mittelstädt Martins de Sousa"
+git_user_email: "edivano@gmail.com"
+
+git_editor: "code --wait"
+
+git_default_branch: "main"
+
+git_aliases:
+  co: checkout
+  br: branch
+  ci: commit
+  st: status
+  lg: "log --oneline --graph --decorate --all"
+
+git_extra_config:
+  pull.rebase: "true"
+  fetch.prune: "true"
+  push.autoSetupRemote: "true"
+  color.ui: "auto"
+  credential.helper: "store"

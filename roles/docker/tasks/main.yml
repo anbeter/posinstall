@@ -1,0 +1,32 @@
+---
+- name: Instalar Docker Engine
+  ansible.builtin.package:
+    name: "{{ docker_packages }}"
+    state: present
+
+
+- name: Garantir serviço Docker habilitado
+  ansible.builtin.systemd:
+    name: "{{ docker_service }}"
+    enabled: true
+    state: started
+
+
+- name: Criar grupo docker
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+
+- name: Adicionar usuário ao grupo docker
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  loop: "{{ docker_users }}"
+
+
+- name: Instalar plugin Docker Compose
+  ansible.builtin.package:
+    name: docker-compose-plugin
+    state: present

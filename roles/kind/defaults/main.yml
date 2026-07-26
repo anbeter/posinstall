@@ -1,0 +1,8 @@
+---
+kind_version: v0.29.0
+
+kind_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+
+kind_install_path: /usr/local/bin/kind

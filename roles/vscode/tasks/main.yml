@@ -1,0 +1,5 @@
+---
+- name: Instalar Visual Studio Code
+  ansible.builtin.package:
+    name: "{{ vscode_package }}"
+    state: present

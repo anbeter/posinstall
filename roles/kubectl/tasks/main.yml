@@ -1,0 +1,11 @@
+---
+- name: Definir arquitetura kubectl
+  ansible.builtin.set_fact:
+    kubectl_arch: "{{ kubectl_arch_map[ansible_facts['architecture']] }}"
+
+
+- name: Baixar kubectl
+  ansible.builtin.get_url:
+    url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl"
+    dest: /usr/local/bin/kubectl
+    mode: "0755"

@@ -1,0 +1,11 @@
+---
+postgres_service: postgresql
+
+postgres_packages_redhat:
+  - postgresql-server
+  - postgresql-contrib
+
+postgres_packages_debian:
+  - postgresql
+  - postgresql-contrib
+  - postgresql-client

@@ -1,0 +1,14 @@
+---
+fonts_redhat:
+  - google-noto-sans-fonts
+  - google-noto-serif-fonts
+  - google-noto-emoji-fonts
+  - liberation-fonts
+  - liberation-mono-fonts
+  - dejavu-fonts-all
+
+fonts_debian:
+  - fonts-noto
+  - fonts-noto-color-emoji
+  - fonts-liberation
+  - fonts-dejavu

@@ -1,0 +1,87 @@
+---
+- name: Atualizar cache do DNF
+  ansible.builtin.dnf:
+    update_cache: true
+
+
+
+- name: Instalar RPM Fusion Free
+  ansible.builtin.command:
+    cmd: >
+      dnf install -y
+      https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm
+  args:
+    creates: /etc/yum.repos.d/rpmfusion-free.repo
+
+
+- name: Instalar RPM Fusion Nonfree
+  ansible.builtin.command:
+    cmd: >
+      dnf install -y
+      https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm
+  args:
+    creates: /etc/yum.repos.d/rpmfusion-nonfree.repo
+
+
+
+
+- name: Adicionar repositório Docker
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/fedora/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: "0644"
+  when: repositories_configure_docker
+
+
+- name: Importar chave GPG do VS Code
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://packages.microsoft.com/keys/microsoft.asc
+  when: repositories_configure_vscode
+
+- name: Configurar repositório VS Code
+  ansible.builtin.copy:
+    dest: /etc/yum.repos.d/vscode.repo
+    mode: "0644"
+    content: |
+      [code]
+      name=Visual Studio Code
+      baseurl=https://packages.microsoft.com/yumrepos/vscode
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+  when: repositories_configure_vscode
+
+
+
+- name: Configurar repositório Google Chrome
+  ansible.builtin.copy:
+    dest: /etc/yum.repos.d/google-chrome.repo
+    mode: "0644"
+    content: |
+      [google-chrome]
+      name=Google Chrome
+      baseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+  when: repositories_configure_google
+
+
+
+- name: Adicionar repositório HashiCorp
+  ansible.builtin.get_url:
+    url: https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+    dest: /etc/yum.repos.d/hashicorp.repo
+    mode: "0644"
+  when: repositories_configure_hashicorp
+
+
+
+- name: Atualizar cache
+  ansible.builtin.dnf:
+    update_cache: true
+
+
+

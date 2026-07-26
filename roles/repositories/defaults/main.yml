@@ -1,0 +1,6 @@
+---
+repositories_configure_rpmfusion: true
+repositories_configure_docker: true
+repositories_configure_google: true
+repositories_configure_vscode: true
+repositories_configure_hashicorp: true

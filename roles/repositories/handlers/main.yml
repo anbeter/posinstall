@@ -1,0 +1,4 @@
+---
+- name: Atualizar cache de pacotes
+  ansible.builtin.package:
+    update_cache: true

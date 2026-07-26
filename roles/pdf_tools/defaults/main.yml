@@ -1,0 +1,6 @@
+---
+pdf_packages_redhat:
+  - qpdf
+
+pdf_packages_debian:
+  - qpdf

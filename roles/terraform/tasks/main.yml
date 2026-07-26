@@ -1,0 +1,5 @@
+---
+- name: Instalar Terraform
+  ansible.builtin.package:
+    name: "{{ terraform_package }}"
+    state: present

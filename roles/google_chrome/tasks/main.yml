@@ -1,0 +1,5 @@
+---
+- name: Instalar Google Chrome
+  ansible.builtin.package:
+    name: "{{ google_chrome_package }}"
+    state: present

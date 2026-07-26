@@ -1,0 +1,21 @@
+---
+- name: Instalar Nginx no RedHat
+  ansible.builtin.dnf:
+    name: "{{ nginx_package }}"
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+
+- name: Instalar Nginx no Debian
+  ansible.builtin.apt:
+    name: "{{ nginx_package }}"
+    state: present
+    update_cache: true
+  when: ansible_facts['os_family'] == "Debian"
+
+
+- name: Habilitar serviço Nginx
+  ansible.builtin.systemd:
+    name: "{{ nginx_service }}"
+    enabled: true
+    state: started

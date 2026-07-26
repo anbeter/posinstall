@@ -1,0 +1,19 @@
+---
+- name: Carregar tarefas RedHat
+  ansible.builtin.include_tasks: RedHat.yml
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Carregar tarefas Debian
+  ansible.builtin.include_tasks: Debian.yml
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Configurar timezone
+  community.general.timezone:
+    name: "{{ timezone }}"
+  when: common_set_timezone
+
+- name: Garantir locale
+  ansible.builtin.command:
+    cmd: localectl set-locale LANG={{ locale }}
+  when: common_set_locale
+  changed_when: true

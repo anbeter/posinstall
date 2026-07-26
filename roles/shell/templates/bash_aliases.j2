@@ -1,0 +1,5 @@
+# Aliases configurados pelo Ansible
+
+{% for alias, command in shell_aliases.items() %}
+alias {{ alias }}='{{ command }}'
+{% endfor %}

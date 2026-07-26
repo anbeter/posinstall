@@ -1,0 +1,33 @@
+---
+- name: Definir arquitetura Helm
+  ansible.builtin.set_fact:
+    helm_arch: "{{ helm_arch_map[ansible_facts['architecture']] }}"
+
+
+- name: Baixar Helm
+  ansible.builtin.get_url:
+    url: "https://get.helm.sh/helm-{{ helm_version }}-linux-{{ helm_arch }}.tar.gz"
+    dest: "/tmp/helm-{{ helm_version }}.tar.gz"
+    mode: "0644"
+
+
+- name: Criar diretório temporário Helm
+  ansible.builtin.file:
+    path: "/tmp/helm-{{ helm_version }}"
+    state: directory
+    mode: "0755"
+
+
+- name: Extrair Helm
+  ansible.builtin.unarchive:
+    src: "/tmp/helm-{{ helm_version }}.tar.gz"
+    dest: "/tmp/helm-{{ helm_version }}"
+    remote_src: true
+
+
+- name: Instalar Helm
+  ansible.builtin.copy:
+    src: "/tmp/helm-{{ helm_version }}/linux-{{ helm_arch }}/helm"
+    dest: "{{ helm_install_dir }}/helm"
+    mode: "0755"
+    remote_src: true

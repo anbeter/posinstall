@@ -1,0 +1,8 @@
+---
+user_name: "{{ lookup('env', 'USER') }}"
+
+user_home: "{{ lookup('env', 'HOME') }}"
+
+timezone: America/Araguaina
+
+locale: pt_BR.UTF-8

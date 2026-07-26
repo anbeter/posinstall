@@ -1,0 +1,14 @@
+---
+- name: Instalar AWS CLI no RedHat
+  ansible.builtin.dnf:
+    name: awscli
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+
+- name: Instalar AWS CLI no Debian
+  ansible.builtin.apt:
+    name: awscli
+    state: present
+    update_cache: true
+  when: ansible_facts['os_family'] == "Debian"

@@ -1,0 +1,29 @@
+---
+timezone: America/Araguaina
+
+locale: pt_BR.UTF-8
+
+common_packages:
+
+  - bash-completion
+  - curl
+  - wget
+  - git
+  - vim
+  - nano
+  - unzip
+  - zip
+  - tar
+  - tree
+  - jq
+  - htop
+  - rsync
+  - bind-utils
+  - net-tools
+  - openssh-clients
+  - python3-pip
+  - python3-devel
+  - gcc
+  - gcc-c++
+  - make
+  - ca-certificates

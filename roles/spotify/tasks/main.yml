@@ -1,0 +1,29 @@
+---
+- name: Instalar Flatpak no RedHat
+  ansible.builtin.dnf:
+    name: flatpak
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+
+- name: Adicionar Flathub
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+  when: ansible_facts['os_family'] == "RedHat"
+
+
+- name: Instalar Spotify via Flatpak no RedHat
+  community.general.flatpak:
+    name: "{{ spotify_flatpak_package }}"
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+
+- name: Instalar Spotify no Debian
+  ansible.builtin.apt:
+    name: "{{ spotify_package }}"
+    state: present
+    update_cache: true
+  when: ansible_facts['os_family'] == "Debian"

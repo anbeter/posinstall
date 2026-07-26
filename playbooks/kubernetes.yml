@@ -1,0 +1,24 @@
+---
+- name: Kubernetes Workstation
+  hosts: localhost
+  become: true
+
+  pre_tasks:
+
+    - name: Carregar variáveis globais
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/../group_vars/all.yml"
+
+    - name: Carregar variáveis da distribuição
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/vars/{{ ansible_facts['distribution'] }}.yml"
+
+
+  roles:
+
+    - docker
+    - kubectl
+    - helm
+    - k9s
+    - kind
+    - minikube
